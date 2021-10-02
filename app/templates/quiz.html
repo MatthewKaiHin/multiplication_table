@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-md-center">
+    <div class="col-6">
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="accordion" id="accordionExample">
+                {% for draw in draw_list %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading_{{ loop.index }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse_{{ loop.index }}" aria-expanded="true"
+                                aria-controls="collapse_{{ loop.index }}">
+                            Question #{{ loop.index }}
+                        </button>
+                    </h2>
+                    <div id="collapse_{{ loop.index }}" class="accordion-collapse collapse"
+                         aria-labelledby="heading_{{ loop.index }}"
+                         data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <p class="fs-4" id="question_{{ loop.index }}">{{ draw }}</p>
+                                <input id="answer_{{ loop.index }}" type="text" class="form-control"
+                                       placeholder="Answer (Integer Only)" aria-label="Answer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <br>
+            <p>{{ form.answer1(class="d-none") }}</p>
+            <p>{{ form.answer2(class="d-none") }}</p>
+            <p>{{ form.answer3(class="d-none") }}</p>
+            <p>{{ form.answer4(class="d-none") }}</p>
+            <p>{{ form.answer5(class="d-none") }}</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-danger" type="reset" value="Reset">
+                <button type="button" class="btn btn-primary" id="save_button"
+                        data-bs-toggle="modal" data-bs-target="#confirmation">Save
+                </button>
+            </div>
+            <div class="modal fade" id="confirmation" tabindex="-1" aria-labelledby="confirmation_label"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmation_label">Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure of the answers?</p>
+                            <p class="text-danger">Cannot be modified after submission</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <p>{{ form.submit(class="btn btn-primary") }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('save_button').addEventListener("click", scoring);
+
+    function scoring() {
+        for (let i = 1; i < 6; i++) {
+            document.getElementById("answer" + i).value = document.getElementById("answer_" + i).value;
+            console.log(document.getElementById("answer" + i).value);
+        }
+        ;
+    };
+</script>
+
+<!--<script>
+    window.onbeforeunload = function () {
+        return 'Are you sure you want to leave this page?\n' +
+            'All answer you have entered may not be saved.';
+    };
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    a1 = getRandomInt(1, 11)
+    b2 = getRandomInt(1, 11)
+
+    console.log(`${a1} x ${b2}`);
+</script>-->
+
+{% endblock %}

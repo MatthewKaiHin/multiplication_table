@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, FieldList
 from wtforms.validators import DataRequired
 
 class LoginForm(FlaskForm):
@@ -7,3 +7,12 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+
+class QuizForm(FlaskForm):
+    answer1 = IntegerField('Answer')
+    answer2 = IntegerField('Answer')
+    answer3 = IntegerField('Answer')
+    answer4 = IntegerField('Answer')
+    answer5 = IntegerField('Answer')
+    ###score = IntegerField('Score')
+    submit = SubmitField('Submit')

@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    quizzes = db.relationship('Quiz', backref='submitter', lazy='dynamic')
 
     def __repr__(self):
         return '{}'.format(self.username)
@@ -32,3 +33,22 @@ class Post(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.body)
+
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question1 = db.Column(db.String(140))
+    answer1 = db.Column(db.Integer)
+    question2 = db.Column(db.String(140))
+    answer2 = db.Column(db.Integer)
+    question3 = db.Column(db.String(140))
+    answer3 = db.Column(db.Integer)
+    question4 = db.Column(db.String(140))
+    answer4 = db.Column(db.Integer)
+    question5 = db.Column(db.String(140))
+    answer5 = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    score = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '{}'.format(self.score)

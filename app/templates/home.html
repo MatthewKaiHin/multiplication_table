@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if not current_user.is_anonymous %}
-<p class="fs-4">Hi, {{ current_user.username }}!</p>
-{% endif %}
+<div class="row">
+    {% if not current_user.is_anonymous %}
+    <div class="col"><p class="fs-4">Hi, {{ current_user.username }}!</p></div>
+    <div class="col-auto"><a class="btn btn-secondary" href="{{ url_for('quiz') }}">Start Quiz</a></div>
+    {% endif %}
+</div>
 <div class="row justify-content-md-center">
     <div class="col-auto">
         <nav>
@@ -12,7 +15,8 @@
                         type="button" role="tab" aria-controls="page_1" aria-selected="true">1
                 </button>
                 {% for i in range(2,11) %}
-                <button class="nav-link text-success" id="tab_{{ i }}" data-bs-toggle="tab" data-bs-target="#page_{{ i }}"
+                <button class="nav-link text-success" id="tab_{{ i }}" data-bs-toggle="tab"
+                        data-bs-target="#page_{{ i }}"
                         type="button" role="tab" aria-controls="page_{{ i }}" aria-selected="true">{{ i }}
                 </button>
                 {% endfor%}
