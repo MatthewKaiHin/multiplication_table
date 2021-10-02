@@ -1,10 +1,55 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% if not current_user.is_anonymous %}
-        <h1>Hi, {{ current_user.username }}!</h1>
-    {% endif %}
-    {% for n in range(1,10) %}
-        <p>This is {{ loop.index }}</p>
-    {% endfor %}
+{% if not current_user.is_anonymous %}
+<p class="fs-4">Hi, {{ current_user.username }}!</p>
+{% endif %}
+<div class="row justify-content-md-center">
+    <div class="col-auto">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link text-success active" id="tab_1" data-bs-toggle="tab" data-bs-target="#page_1"
+                        type="button" role="tab" aria-controls="page_1" aria-selected="true">1
+                </button>
+                {% for i in range(2,11) %}
+                <button class="nav-link text-success" id="tab_{{ i }}" data-bs-toggle="tab" data-bs-target="#page_{{ i }}"
+                        type="button" role="tab" aria-controls="page_{{ i }}" aria-selected="true">{{ i }}
+                </button>
+                {% endfor%}
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="page_1"
+                 role="tabpanel" aria-labelledby="page_1-tab">
+                <table class="table table-hover d-flex flex-column">
+                    <tbody>
+                    {% for j in range(1,11) %}
+                    <tr class="row">
+                        <td class="text-center text-success fw-bold">
+                            1 x {{ j }} = {{ 1*j }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% for i in range(2,11) %}
+            <div class="tab-pane fade show" id="page_{{ i }}"
+                 role="tabpanel" aria-labelledby="page_{{ i }}-tab">
+                <table class="table table-hover d-flex flex-column">
+                    <tbody>
+                    {% for j in range(1,11) %}
+                    <tr class="row">
+                        <td class="text-center text-success fw-bold">
+                            {{ i }} x {{ j }} = {{ i*j }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
