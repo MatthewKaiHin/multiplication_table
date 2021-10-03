@@ -1,5 +1,5 @@
 from app import db
-from app.models import User, Post
+from app.models import User
 
 user1 = User(username='AnnChan', email='annchan@multiplication.com', role="Teacher")
 user2 = User(username='JoeLam', email='joelam@multiplication.com', role="Student")

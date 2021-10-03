@@ -5,6 +5,7 @@
     {% if not current_user.is_anonymous %}
     <div class="col d-sm-flex justify-content-md-start">
         <p class="fs-4">Hi, {{ current_user.username }}!</p>
+        <p>( {{ current_user.role }} )</p>
     </div>
     {% if 'Teacher' in current_user.role %}
     <div class="col d-sm-flex justify-content-md-end">
