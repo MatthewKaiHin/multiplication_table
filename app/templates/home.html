@@ -4,7 +4,33 @@
 <div class="row">
     {% if not current_user.is_anonymous %}
     <div class="col"><p class="fs-4">Hi, {{ current_user.username }}!</p></div>
-    <div class="col-auto"><a class="btn btn-secondary" href="{{ url_for('quiz') }}">Start Quiz</a></div>
+    {% if 'Teacher' in current_user.role %}
+    <div class="col-auto"><a class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                             aria-controls="offcanvasRight">Open Quiz</a></div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 class="text-primary" id="offcanvasRightLabel">Open Quiz</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>You can select more than one students</p>
+                <p>If the quizzes haven't finished, you can't open them again.</p>
+                {{ form.userid(class="form-select") }}
+                <br>
+                {{ form.submit(class="btn btn-primary")}}
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    {% for quiz in quizzes %}
+    {% if current_user.id == quiz.user_id %}
+    <div class="col-auto">
+        <a type="button" class="btn btn-success" href="/quiz/{{ quiz.id }}">Start Quiz</a>
+    </div>
+    {% endif %}
+    {% endfor %}
     {% endif %}
 </div>
 <div class="row justify-content-md-center">
