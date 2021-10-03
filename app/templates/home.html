@@ -1,12 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
+<div class="row align-items-center">
     {% if not current_user.is_anonymous %}
-    <div class="col"><p class="fs-4">Hi, {{ current_user.username }}!</p></div>
+    <div class="col d-sm-flex justify-content-md-start">
+        <p class="fs-4">Hi, {{ current_user.username }}!</p>
+    </div>
     {% if 'Teacher' in current_user.role %}
-    <div class="col-auto"><a class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
-                             aria-controls="offcanvasRight">Open Quiz</a></div>
+    <div class="col d-sm-flex justify-content-md-end">
+        <a class="btn btn-success align-items-center" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+           aria-controls="offcanvasRight">Open Quiz</a>
+        <p> &nbsp;&nbsp;</p>
+        <button type="button" class="btn btn-danger align-items-center" data-bs-toggle="modal"
+                data-bs-target="#close_quiz">
+            Close Quiz
+        </button>
+        <div class="modal fade" id="close_quiz" tabindex="-1" aria-labelledby="close_quiz_label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="close_quiz_label">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure to close all quizzes?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                        <a class="btn btn-danger align-items-center" href="/close_quiz">Close Quiz</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
             <h5 class="text-primary" id="offcanvasRightLabel">Open Quiz</h5>
@@ -16,8 +42,9 @@
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <p>You can select more than one students</p>
-                <p>If the quizzes haven't finished, you can't open them again.</p>
-                {{ form.userid(class="form-select") }}
+                <div class="text-danger">Not allow to open before you close and delete the older quizzes.</div>
+                <br>
+                {{ form.userid(class="form-select",size="6") }}
                 <br>
                 {{ form.submit(class="btn btn-primary")}}
             </form>
@@ -25,18 +52,26 @@
     </div>
     {% endif %}
     {% for quiz in quizzes %}
-    {% if current_user.id == quiz.user_id %}
-    <div class="col-auto">
+    {% if (current_user.id == quiz.user_id) and (quiz.stage == 'open') %}
+    <div class="col d-md-flex justify-content-md-end">
         <a type="button" class="btn btn-success" href="/quiz/{{ quiz.id }}">Start Quiz</a>
     </div>
     {% endif %}
+    {% for answer in answers %}
+    {% if (current_user.id == quiz.user_id) and (quiz.id == answer.quiz_id) and ( answer.score > 0) %}
+    <div class="col d-md-flex justify-content-md-end">
+        <a type="button" class="btn btn-secondary" href="/result/{{ quiz.id }}">Quiz Result</a>
+    </div>
+    {% endif %}
+    {% endfor %}
     {% endfor %}
     {% endif %}
 </div>
-<div class="row justify-content-md-center">
-    <div class="col-auto">
+<br>
+<div class="row justify-content-lg-center">
+    <div class="col-lg-6">
         <nav>
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
                 <button class="nav-link text-success active" id="tab_1" data-bs-toggle="tab" data-bs-target="#page_1"
                         type="button" role="tab" aria-controls="page_1" aria-selected="true">1
                 </button>
@@ -81,5 +116,83 @@
             {% endfor %}
         </div>
     </div>
+    {% if not current_user.is_anonymous %}
+    {% if 'Teacher' in current_user.role %}
+    <div class="col">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">State</th>
+                <th scope="col">Score</th>
+                <th scope="col">Detail</th>
+                <th scope="col">Detele</th>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+            <tr>
+                <th colspan="5">{{ user }}</th>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <table class="table table-borderless align-middle">
+                        {% for quiz in quizzes %}
+                        {% if quiz.user_id == user.id %}
+                        <tr>
+                            <td>{{ quiz.stage }}</td>
+                            {% for answer in answers %}
+                            {% if answer.quiz_id == quiz.id %}
+                            {% if answer.score == 'Not Completed' %}
+                            <td>0/5</td>
+                            <td>
+                                <button class="btn btn-outline-success btn-sm" disabled>Detail</button>
+                            </td>
+                            {% else %}
+                            <td>{{ answer.score }}/5</td>
+                            <td><a class="btn btn-outline-success btn-sm" href="/result/{{ quiz.id }}">Detail</a></td>
+                            {% endif %}
+                            <td>
+                                <button type="button" class="btn-close" data-bs-toggle="modal"
+                                        data-bs-target="#delete_quiz">
+                                </button>
+                                <div class="modal fade" id="delete_quiz" tabindex="-1"
+                                     aria-labelledby="delete_quiz_label"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="delete_quiz_label">Confirmation</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure to delete?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Back
+                                                </button>
+                                                <a class="btn btn-danger align-items-center"
+                                                   href="/delete_quiz/{{ quiz.id }}">Detele</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% endif %}
 </div>
 {% endblock %}

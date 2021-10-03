@@ -61,7 +61,7 @@ class Answer(db.Model):
     answer4 = db.Column(db.Integer)
     answer5 = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    score = db.Column(db.Integer)
+    score = db.Column(db.String(140))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'))
 
     def __repr__(self):

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-md-center">
+    <div class="col-md-6">
+        {% for answer in answers %}
+        <p class="fs-4">You score is {{ answer.score }}/5</p>
+        {% endfor %}
+        <ul class="list-group border-dark">
+            {% for quiz in quizzes %}
+            {% for answer in answers %}
+            <li class="list-group-item list-group-item-secondary">Question #1</li>
+            <li class="list-group-item"><p class="fs-4">{{ quiz.question1 }}</p>
+                <div class="input-group mb-3">
+                    {% if answer.answer1 == quiz.answer1 %}
+                    <input type="text" value="{{ answer.answer1 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-success" value="Corrert" disabled>
+                    {% else %}
+                    <input type="text" value="{{ answer.answer1 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-danger" value="Corrert answer is {{ quiz.answer1 }}" disabled>
+                    {% endif %}
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-secondary">Question #2</li>
+            <li class="list-group-item"><p class="fs-4">{{ quiz.question2 }}</p>
+                <div class="input-group mb-3">
+                    {% if answer.answer2 == quiz.answer2 %}
+                    <input type="text" value="{{ answer.answer2 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-success" value="Corrert" disabled>
+                    {% else %}
+                    <input type="text" value="{{ answer.answer2 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-danger" value="Corrert answer is {{ quiz.answer2 }}" disabled>
+                    {% endif %}
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-secondary">Question #3</li>
+            <li class="list-group-item"><p class="fs-4">{{ quiz.question3 }}</p>
+                <div class="input-group mb-3">
+                    {% if answer.answer3 == quiz.answer3 %}
+                    <input type="text" value="{{ answer.answer3 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-success" value="Corrert" disabled>
+                    {% else %}
+                    <input type="text" value="{{ answer.answer3 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-danger" value="Corrert answer is {{ quiz.answer3 }}" disabled>
+                    {% endif %}
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-secondary">Question #4</li>
+            <li class="list-group-item"><p class="fs-4">{{ quiz.question4 }}</p>
+                <div class="input-group mb-3">
+                    {% if answer.answer4 == quiz.answer4 %}
+                    <input type="text" value="{{ answer.answer4 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-success" value="Corrert" disabled>
+                    {% else %}
+                    <input type="text" value="{{ answer.answer4 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-danger" value="Corrert answer is {{ quiz.answer4 }}" disabled>
+                    {% endif %}
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-secondary">Question #5</li>
+            <li class="list-group-item"><p class="fs-4">{{ quiz.question5 }}</p>
+                <div class="input-group mb-3">
+                    {% if answer.answer5 == quiz.answer5 %}
+                    <input type="text" value="{{ answer.answer5 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-success" value="Corrert" disabled>
+                    {% else %}
+                    <input type="text" value="{{ answer.answer5 }}" class="form-control" disabled>
+                    <input class="input-group-text alert-danger" value="Corrert answer is {{ quiz.answer5 }}" disabled>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+        <br>
+        <div class="row">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a type="button" class="btn btn-secondary" href="{{ url_for('home') }}">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

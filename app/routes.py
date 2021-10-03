@@ -4,14 +4,18 @@ from app.forms import LoginForm, QuizForm, AnswerForm
 from app.models import User, Quiz, Answer
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+
 import random
 
 def quiz_to_user():
     user_quiz_open = []
     user_choices = []
-    for quiz in db.session.query(Quiz).filter_by(stage='open'):
-        user_quiz_open.append(quiz.user_id)
-    for user in db.session.query(User).filter_by(role='Student'):
+    for quiz in Quiz.query:
+        if quiz.stage == 'open':
+            user_quiz_open.append(quiz.user_id)
+        elif quiz.stage == 'close':
+            user_quiz_open.append(quiz.user_id)
+    for user in User.query.filter_by(role='Student'):
         if not user.id in user_quiz_open:
             user_choices.append((user.id, user.username))
     return user_choices
@@ -47,8 +51,11 @@ def home():
         db.session.commit()
         flash('New quizzes created')
         return redirect(url_for('home'))
-    quizzes = db.session.query(Quiz).filter_by(stage='open')
-    return render_template('home.html', title='Home', form=form, quizzes=quizzes)
+    users = db.session.query(User).filter_by(role='Student')
+    quizzes = db.session.query(Quiz).order_by(Quiz.id.desc())
+    answers = db.session.query(Answer)
+    return render_template('home.html', title='Home', form=form, quizzes=quizzes,
+                           users=users, answers=answers)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -75,28 +82,61 @@ def logout():
 @app.route('/quiz/<int:quiz_id>', methods=['GET', 'POST'])
 @login_required
 def quiz(quiz_id):
-    quizzes = db.session.query(Quiz).filter_by(id=quiz_id)
-    for quiz in db.session.query(Quiz).filter_by(id=quiz_id):
+    quizzes = Quiz.query.get_or_404(quiz_id)
+    for quiz in Quiz.query.filter_by(id=quiz_id):
         questions = [quiz.question1, quiz.question2, quiz.question3, quiz.question4, quiz.question5]
     form = AnswerForm()
     if form.validate_on_submit():
-        for check in db.session.query(Quiz).filter_by(id=quiz_id):
+        for check in Quiz.query.filter_by(id=quiz_id):
             score = 0
             if check.answer1 == form.answer1.data:
                 score += 1
-            elif check.answer2 == form.answer2.data:
+            if check.answer2 == form.answer2.data:
                 score += 1
-            elif check.answer3 == form.answer3.data:
+            if check.answer3 == form.answer3.data:
                 score += 1
-            elif check.answer4 == form.answer4.data:
+            if check.answer4 == form.answer4.data:
                 score += 1
-            elif check.answer5 == form.answer5.data:
+            if check.answer5 == form.answer5.data:
                 score += 1
         answer = Answer(answer1=form.answer1.data, answer2=form.answer2.data, answer3=form.answer3.data,
                         answer4=form.answer4.data, answer5=form.answer5.data, score=score, quiz_id=quiz_id)
+        quizzes.stage = 'close'
         db.session.add(answer)
         db.session.commit()
         flash('Quiz submited')
-        return redirect(url_for('home'))
+        return redirect('/result/{}'.format(quiz_id))
     return render_template('quiz.html', title='Quiz', quizzes=quizzes,
                            questions=questions, form=form)
+
+@app.route('/result/<int:quiz_id>', methods=['GET', 'POST'])
+@login_required
+def result(quiz_id):
+    quizzes = Quiz.query.filter_by(id=quiz_id)
+    answers = Answer.query.filter_by(quiz_id=quiz_id)
+    return render_template('result.html', title='Result', quizzes=quizzes, answers=answers)
+
+@app.route('/close_quiz')
+@login_required
+def close_quiz():
+    answer_close = []
+    for quizzes in Quiz.query.filter_by(stage='open'):
+        quizzes.stage = 'close'
+        score_change = Answer(quiz_id=quizzes.id, score='Not Completed')
+        answer_close.append(score_change)
+    db.session.add_all(answer_close)
+    db.session.commit()
+    flash('Quiz closed')
+    return redirect(url_for('home'))
+
+@app.route('/delete_quiz/<int:quiz_id>')
+@login_required
+def delete_quiz(quiz_id):
+    quizid = Quiz.query.get(quiz_id)
+    for answer in Answer.query.filter_by(quiz_id=quiz_id):
+        answerid = Answer.query.get(answer.id)
+        db.session.delete(answerid)
+        db.session.commit()
+    db.session.delete(quizid)
+    db.session.commit()
+    return redirect(url_for('home'))
