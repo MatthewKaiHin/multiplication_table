@@ -31,10 +31,8 @@
                 </div>
                 {% endfor %}
             </div>
-            <div>{{ form.answer1(class="d-none") }}
-                {% for error in form.answer1.errors %}
-                <span class="text-danger">[Q1: {{ error }}]</span>
-                {% endfor %}
+            <div>
+                {{ form.answer1(class="d-none") }}
             </div>
             <div>
                 {{ form.answer2(class="d-none") }}
