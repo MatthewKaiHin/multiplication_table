@@ -144,15 +144,8 @@
                             <td>{{ quiz.stage }}</td>
                             {% for answer in answers %}
                             {% if answer.quiz_id == quiz.id %}
-                            {% if answer.score == 'Not Completed' %}
-                            <td>0/5</td>
-                            <td>
-                                <button class="btn btn-outline-success btn-sm" disabled>Detail</button>
-                            </td>
-                            {% else %}
                             <td>{{ answer.score }}/5</td>
                             <td><a class="btn btn-outline-success btn-sm" href="/result/{{ quiz.id }}">Detail</a></td>
-                            {% endif %}
                             <td>
                                 <button type="button" class="btn-close" data-bs-toggle="modal"
                                         data-bs-target="#delete_quiz">

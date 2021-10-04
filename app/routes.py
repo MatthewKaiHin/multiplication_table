@@ -122,7 +122,7 @@ def close_quiz():
     answer_close = []
     for quizzes in Quiz.query.filter_by(stage='open'):
         quizzes.stage = 'close'
-        score_change = Answer(quiz_id=quizzes.id, score='Not Completed')
+        score_change = Answer(quiz_id=quizzes.id, score=0)
         answer_close.append(score_change)
     db.session.add_all(answer_close)
     db.session.commit()
